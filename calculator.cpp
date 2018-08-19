@@ -2,6 +2,7 @@
 
 #include <QGridLayout>
 #include <QLCDNumber>
+#include <QPushButton>
 
 Calculator::Calculator (QWidget* pwgt) : QWidget(pwgt)
 {
@@ -29,3 +30,33 @@ Calculator::Calculator (QWidget* pwgt) : QWidget(pwgt)
     setLayout(pLayout);
 }
 
+QPushButton* Calculator :: createButton(const QString& buttonName)
+{
+    QPushButton* button = new QPushButton(buttonName);
+    button->setMinimumSize(40,40);
+    connect(button, SIGNAL(clicked()), SLOT(slotButtonClicked()));
+    return button;
+}
+
+void Calculator :: calculate()
+{
+    double strOperand2 = stk_.pop().toDouble();
+    QString strOperation = stk_.pop();
+    double strOperand1 = stk_.pop().toDouble();
+
+    double result = 0;
+
+    if (strOperation == "+")
+        result = strOperand1 + strOperand2;
+
+    if (strOperation == "-")
+        result = strOperand1 - strOperand2;
+
+    if (strOperation == "*")
+        result = strOperand1 * strOperand2;
+
+    if (strOperation == "/")
+        result = strOperand1 / strOperand2;
+
+    plcd_->display(result);
+}
