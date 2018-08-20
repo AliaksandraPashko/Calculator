@@ -1,8 +1,10 @@
+
 #include "calculator.h"
 
 #include <QGridLayout>
 #include <QLCDNumber>
 #include <QPushButton>
+#include <QDebug>
 
 Calculator::Calculator (QWidget* pwgt) : QWidget(pwgt)
 {
@@ -59,4 +61,53 @@ void Calculator :: calculate()
         result = strOperand1 / strOperand2;
 
     plcd_->display(result);
+}
+
+void Calculator :: slotButtonClicked()
+{
+    QString str = ((QPushButton*)sender())->text();
+    qDebug() << plcd_->value();
+
+    if (str == "CE")
+    {
+        stk_.clear();
+        strDisplay_ = "";
+        plcd_->display("0");
+        return;
+    }
+
+    if (str.contains(QRegExp("[0-9]")))
+    {
+        strDisplay_ += str;
+        plcd_->display(strDisplay_.toDouble());
+    }
+    else
+    {
+        if (str == ".")
+        {
+            strDisplay_ += str;
+            plcd_->display(strDisplay_);
+        }
+        else
+        {
+            if (stk_.count() >= 2)
+            {
+                stk_.push(QString().setNum(plcd_->value()));
+                calculate();
+                stk_.clear();
+                stk_.push(QString().setNum(plcd_->value()));
+                if (str != "=")
+                {
+                    stk_.push(str);
+                }
+            }
+            else
+            {
+                stk_.push(QString().setNum(plcd_->value()));
+                stk_.push(str);
+                strDisplay_ = "";
+                plcd_->display("===");
+            }
+        }
+    }
 }
