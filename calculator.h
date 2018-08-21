@@ -16,7 +16,7 @@ private:
 
 public:
     Calculator(QWidget* pwgt = 0);
-    QPushButton* createButtton(const QString& button);
+    QPushButton* createButton(const QString& buttonName);
     void calculate();
 
 public slots:
